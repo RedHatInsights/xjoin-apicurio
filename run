@@ -1,0 +1,12 @@
+#!/bin/bash
+
+DB_HOSTNAME=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"hostname":"\([^"]*\)".*/\1/')
+DB_NAME=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"name":"\([^"]*\)".*/\1/')
+DB_PORT=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"port":\([^"]*\)[,\}].*/\1/')
+
+export HTTP_PORT=$(cat "${ACG_CONFIG}" | sed 's/.*"privatePort":\([^"]*\)[,\}].*/\1/')
+export REGISTRY_DATASOURCE_URL="jdbc:postgresql://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}"
+export REGISTRY_DATASOURCE_USERNAME=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"username":"\([^"]*\)".*/\1/')
+export REGISTRY_DATASOURCE_PASSWORD=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"password":"\([^"]*\)".*/\1/')
+
+exec /usr/local/s2i/run

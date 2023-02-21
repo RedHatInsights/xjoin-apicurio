@@ -1,0 +1,59 @@
+---
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: "${APP_NAME}"
+objects:
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdApp
+  metadata:
+    name: "${APP_NAME}"
+    annotations:
+      ${LINT_ANNOTATION}: "minimum three replicas not required"
+  spec:
+    envName: ${ENV_NAME}
+    dependencies: []
+    optionalDependencies: []
+    database:
+      name: apicurio
+      version: 13
+    kafkaTopics:
+    deployments:
+    - name: service
+      minReplicas: 1
+      deploymentStrategy:
+        privateStrategy: RollingUpdate
+      webServices:
+        private:
+          enabled: true
+      ports:
+        - name: private
+          protocol: TCP
+          targetPort: 10000
+          port: 8080
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        livenessProbe:
+          exec:
+            command:
+            - whoami
+        readinessProbe:
+          exec:
+            command:
+            - whoami
+
+parameters:
+- name: APP_NAME
+  required: true
+  value: xjoin-apicurio
+- name: ENV_NAME
+  description: ClowdEnv Name
+- name: LINT_ANNOTATION
+  value: 'default-lint-annotation-value'
+- name: IMAGE
+  description: Image name
+  value: quay.io/cloudservices/xjoin-apicurio
+- name: IMAGE_TAG
+  description: Image tag
+  required: true
+  value: latest
