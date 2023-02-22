@@ -4,9 +4,19 @@ DB_HOSTNAME=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"hostname":"\([^"]
 DB_NAME=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"name":"\([^"]*\)".*/\1/')
 DB_PORT=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"port":\([^"]*\)[,\}].*/\1/')
 
-export HTTP_PORT=$(cat "${ACG_CONFIG}" | sed 's/.*"privatePort":\([^"]*\)[,\}].*/\1/')
-export REGISTRY_DATASOURCE_URL="jdbc:postgresql://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}"
+DB_SSL=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"sslMode":"\([^"]*\)".*/\1/')
+DB_CA=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"rdsCa":"\([^"]*\)".*/\1/')
+
+if [[ -z "${DB_CA}" ]]; then
+  export REGISTRY_DATASOURCE_URL="jdbc:postgresql://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL}  "
+else
+  echo -e $DB_CA > /tmp/db_ca
+  export REGISTRY_DATASOURCE_URL="jdbc:postgresql://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL}&sslrootcert=\`/tmp/db_ca\`"
+fi
+
 export REGISTRY_DATASOURCE_USERNAME=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"username":"\([^"]*\)".*/\1/')
 export REGISTRY_DATASOURCE_PASSWORD=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"password":"\([^"]*\)".*/\1/')
+
+export HTTP_PORT=$(cat "${ACG_CONFIG}" | sed 's/.*"privatePort":\([^"]*\)[,\}].*/\1/')
 
 exec /usr/local/s2i/run
