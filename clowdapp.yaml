@@ -34,13 +34,19 @@ objects:
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
         livenessProbe:
-          exec:
-            command:
-            - whoami
+          httpGet:
+            path: /health/live
+            port: 10000
+          initialDelaySeconds: 40
+          periodSeconds: 20
+          timeoutSeconds: 5
         readinessProbe:
-          exec:
-            command:
-            - whoami
+          httpGet:
+            path: /health/ready
+            port: 10000
+          initialDelaySeconds: 40
+          periodSeconds: 20
+          timeoutSeconds: 5
 
 parameters:
 - name: APP_NAME
