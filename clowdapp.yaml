@@ -15,7 +15,7 @@ objects:
     dependencies: []
     optionalDependencies: []
     database:
-      name: apicurio
+      name: xjoin-apicurio
       version: 13
     kafkaTopics:
     deployments:
