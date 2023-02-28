@@ -11,7 +11,7 @@ if [[ -z "${DB_CA}" ]]; then
   export REGISTRY_DATASOURCE_URL="jdbc:postgresql://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL}  "
 else
   echo -e $DB_CA > /tmp/db_ca
-  export REGISTRY_DATASOURCE_URL="jdbc:postgresql://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL}&sslrootcert=\`/tmp/db_ca\`"
+  export REGISTRY_DATASOURCE_URL="jdbc:postgresql://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL}&sslrootcert=/tmp/db_ca"
 fi
 
 export REGISTRY_DATASOURCE_USERNAME=$(cat "${ACG_CONFIG}" | sed 's/.*"database":{[^}]*"username":"\([^"]*\)".*/\1/')
