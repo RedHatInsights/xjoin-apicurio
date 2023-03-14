@@ -12,8 +12,13 @@ objects:
       ${LINT_ANNOTATION}: "minimum three replicas not required"
   spec:
     envName: ${ENV_NAME}
-    dependencies: []
-    optionalDependencies: []
+    testing:
+      iqePlugin: xjoin
+    dependencies:
+      - xjoin-api-gateway
+    optionalDependencies:
+      - xjoin-search
+      - host-inventory
     database:
       name: xjoin-apicurio
       version: 13
