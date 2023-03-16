@@ -14,9 +14,8 @@ objects:
     envName: ${ENV_NAME}
     testing:
       iqePlugin: xjoin
-    dependencies:
-      - xjoin-api-gateway
     optionalDependencies:
+      - xjoin-api-gateway
       - xjoin-search
       - host-inventory
     database:
